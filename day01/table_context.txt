@@ -1,0 +1,108 @@
+TABLE 1: departments
+Purpose: Stores information about company departments.
+
+Columns:
+department_id: SERIAL, PRIMARY KEY. Unique identifier for each department.
+department_name: VARCHAR(100), NOT NULL. Name of the department.
+location: VARCHAR(100), NOT NULL. Physical location of the department.
+
+Sample data:
+1, Sales & Growth, New York
+2, Logistics & Ops, Chicago
+3, Engineering, San Francisco
+
+
+
+TABLE 2: employees
+Purpose: Stores information about company employees.
+
+Columns:
+employee_id: SERIAL, PRIMARY KEY. Unique identifier for each employee.
+first_name: VARCHAR(50), NOT NULL. Employee's first name.
+last_name: VARCHAR(50), NOT NULL. Employee's last name.
+email: VARCHAR(100), UNIQUE, NOT NULL. Employee's email address.
+department_id: INT, FOREIGN KEY referencing departments.department_id.
+salary: NUMERIC(10,2), NOT NULL. Employee salary.
+hire_date: DATE, NOT NULL. Date the employee was hired.
+
+Relationship:
+employees.department_id references departments.department_id.
+
+Sample data:
+1, Alice, Smith, alice.smith@company.com, department 1, salary 85000.00, hired 2022-03-15
+2, Bob, Jones, bob.jones@company.com, department 2, salary 72000.00, hired 2021-06-01
+3, Charlie, Brown, charlie.brown@company.com, department 3, salary 115000.00, hired 2020-01-10
+
+
+
+TABLE 3: customers
+Purpose: Stores information about customers and their companies.
+
+Columns:
+customer_id: SERIAL, PRIMARY KEY. Unique identifier for each customer.
+company_name: VARCHAR(150), NOT NULL. Name of the customer's company.
+contact_name: VARCHAR(100), NOT NULL. Name of the primary customer contact.
+country: VARCHAR(50), NOT NULL. Customer's country.
+signup_date: DATE, NOT NULL. Date the customer signed up.
+
+Sample data:
+1, Alpha Corp, Jane Doe, USA, signup date 2023-01-10
+2, Beta LLC, John Roe, Canada, signup date 2023-05-20
+3, Gamma Inc, Acme User, UK, signup date 2024-02-14
+
+
+
+TABLE 4: sales
+Purpose: Stores individual sales transactions.
+
+Columns:
+sale_id: SERIAL, PRIMARY KEY. Unique identifier for each sale.
+customer_id: INT, FOREIGN KEY referencing customers.customer_id.
+employee_id: INT, FOREIGN KEY referencing employees.employee_id.
+product_name: VARCHAR(100), NOT NULL. Name of the product sold.
+quantity: INT, NOT NULL. Number of units sold.
+unit_price: NUMERIC(10,2), NOT NULL. Price per unit.
+sale_date: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP. Date and time when the sale occurred.
+
+Relationships:
+sales.customer_id references customers.customer_id.
+sales.employee_id references employees.employee_id.
+
+Important calculation:
+total_sale_amount = quantity * unit_price
+
+Sample data:
+Sale 1: customer 1, employee 1, Enterprise SaaS License, quantity 5, unit price 1200.00, sale date 2025-01-10 10:30:00
+Sale 2: customer 2, employee 1, Cloud Hosting Add-on, quantity 10, unit price 150.00, sale date 2025-01-12 14:00:00
+Sale 3: customer 3, employee 2, API Analytics Module, quantity 2, unit price 4500.00, sale date 2025-01-15 09:15:00
+Sale 4: customer 1, employee 3, Security Audit Tool, quantity 1, unit price 3000.00, sale date 2025-01-18 16:45:00
+
+
+
+TABLE 5: shipping
+Purpose: Stores shipping and delivery information for sales.
+
+Columns:
+shipment_id: SERIAL, PRIMARY KEY. Unique identifier for each shipment.
+sale_id: INT, FOREIGN KEY referencing sales.sale_id.
+carrier: VARCHAR(50), NOT NULL. Shipping company/carrier.
+shipping_cost: NUMERIC(10,2), NOT NULL. Cost of shipping.
+delivery_status: VARCHAR(50), NOT NULL. Current delivery status.
+shipped_date: DATE, nullable. Date the shipment was shipped.
+delivered_date: DATE, nullable. Date the shipment was delivered.
+
+Relationship:
+shipping.sale_id references sales.sale_id.
+
+Sample data:
+Shipment 1: sale 1, FedEx, shipping cost 45.00, Delivered, shipped 2025-01-11, delivered 2025-01-13
+Shipment 2: sale 2, UPS, shipping cost 25.50, Delivered, shipped 2025-01-13, delivered 2025-01-16
+Shipment 3: sale 3, DHL, shipping cost 120.00, In Transit, shipped 2025-01-16, not delivered
+Shipment 4: sale 4, FedEx, shipping cost 50.00, Pending, not shipped, not delivered
+
+
+TABLE RELATIONSHIPS
+employees.department_id → departments.department_id
+sales.customer_id → customers.customer_id
+sales.employee_id → employees.employee_id
+shipping.sale_id → sales.sale_id
